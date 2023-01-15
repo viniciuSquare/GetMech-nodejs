@@ -1,0 +1,64 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Services {
+  id           Int          @id @default(autoincrement())
+  description  String
+  usersId      Int
+  contactId    Int
+  state        ServiceState @default(Aberto)
+  city         Int
+  vehicleYear  Int
+  vehicleModel String
+  vehicleBrand String
+
+  client  Users    @relation(fields: [usersId], references: [id])
+  contact Contacts @relation(fields: [contactId], references: [id])
+}
+
+enum ServiceState {
+  Aberto
+  Designado
+  Concluido
+  Cancelado
+}
+
+model Users {
+  id       Int     @id @default(autoincrement())
+  name     String
+  fotoUrl  String?
+  address  String?
+  isClient Boolean
+  isMech   Boolean
+
+  contact  Contacts[]
+  Services Services[]
+}
+
+model Contacts {
+  id          Int     @id @default(autoincrement())
+  address     String
+  mainContact Boolean @default(false)
+  usersId     Int?
+
+  client    Users?      @relation(fields: [usersId], references: [id])
+  Services  Services[]
+  Feedbacks Feedbacks[]
+}
+
+model Feedbacks {
+  id              Int    @id @default(autoincrement())
+  description     String
+  authorContactId Int
+
+  contact Contacts @relation(fields: [authorContactId], references: [id])
+}

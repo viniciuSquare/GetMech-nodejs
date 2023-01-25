@@ -6,7 +6,7 @@ import { BaseController } from "../base/BaseController";
 
 export class UserController extends BaseController<User>{
 
-    getUserDataFromRequest(request: Request) {
+    getDataFromRequest(request: Request) {
         let { id, name, fotoUrl, address, isUser, isMech } = request.body
         
         return { 

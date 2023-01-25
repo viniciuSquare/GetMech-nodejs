@@ -13,9 +13,15 @@ export abstract class BaseModel {
   protected abstract get persistenceData(): any;
 
   async list(): Promise<any[]> {
-    return await this.prismaModel.findMany();
-  }
+    const queryResponse = await this.prismaModel.findMany();
 
+    this.prisma.$disconnect();
+    return queryResponse
+  }
+  
+  /**
+   * Handles persistences transactions try/catch
+   * */
   async save() {
     try {
       if (this.id)
@@ -27,6 +33,8 @@ export abstract class BaseModel {
     } catch (error) {
       console.error(error)
     }
+
+    this.prisma.$disconnect()
   }
 
   async update(id: number, data: any): Promise<any> {

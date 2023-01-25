@@ -15,7 +15,18 @@ export class User extends BaseModel {
         console.log(data)
     }
     
-    protected prismaModel: Prisma.UsersDelegate<Prisma.RejectOnNotFound | Prisma.RejectPerOperation | undefined> {
+    protected get persistenceData(): any {
+        return {
+            name:     this.name,
+            fotoUrl:  this.fotoUrl,
+            address:  this.address,
+            isClient: this.isClient,
+            isMech:   this.isMech
+        }
+    }
+
+    protected get prismaModel(): Prisma.UsersDelegate<Prisma.RejectOnNotFound | Prisma.RejectPerOperation | undefined> | undefined {
         return this.prisma.users;
     }
+
 }

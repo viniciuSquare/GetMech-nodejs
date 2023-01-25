@@ -1,74 +1,59 @@
-import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
 import { BaseModel } from "./BaseModel";
 
-export class BaseController<Model> {
-    model: typeof BaseModel
+export class BaseController<Model extends BaseModel> {
+	model: Model
 
-    constructor( model: typeof BaseModel ) { 
-        this.model = model;
-    }
-    
-    protected getDataFromRequest( request: Request ) {
-        return request.body
-    }
+	constructor(model: Model) {
+		this.model = model;
+	}
 
+	setModel(model: Model) {
+		this.model = model;
+	}
 
-    get(request: Request, response: Response) {
-        try {
-            
-            response.json(this.model.list().then(data=>console.log(data)));
+	// Todo -> This must return the model instance
+	protected getDataFromRequest(request: Request) {
+		return request.body
+	}
 
-        } catch (error) {
-            console.log(error);
-            return error;
-        }
-        // prismaUser.$disconnect()
-    }
+	async get(request: Request, response: Response) {
+		try {
+			response.json(await this.model.list().then(data => console.log(data)));
+		} catch (error) {
+			console.log(error);
+			return error;
+		}
+	}
 
-    create(request: Request, response: Response) {
-        const model = this.getDataFromRequest(request)
-        console.log(user)
-        model.create(user).then( data => console.log(data) );
+	create(request: Request, response: Response) {
+		try {
+			const model: BaseModel = this.getDataFromRequest(request)
+			model.save().then(data => console.log(data));
 
-        
-        
-        // this.getUserDataFromRequest(request);
+		} catch (error) {
 
-        // try {
-        //     prismaUser.users.create({
-        //         data: request.body
-        //     }
-        //     ).then(createdService => response.status(201).json(createdService))
-        // } catch (error) {
+			response.json(error);
+		}
+	}
 
-        //     response.json(error);
-        // }
-        // prismaUser.$disconnect()
-    }
+	async update(request: Request, response: Response) {
+		if (!request.query.id) {
+			response.status(403).json('Page ID not informed');
+			return
+		}
 
-    update(request: Request, response: Response) {
-        const prismaUser: PrismaClient = new PrismaClient();
+		try {
+			let data: Model = this.getDataFromRequest(request);
+			
+			const createdService = await data.save()
+			// TODO -> Update should be executed by method save() on instance with data changed
+			// const createdService = await this.model.update(Number(data.id), data);
 
-        if (!request.query.id) {
-            response.status(403).json('Page ID not informed');
-            return
-        }
+			response.status(201).json(createdService);
+		} catch (error) {
 
-        let data = this.getUserDataFromRequest(request);
-
-        try {
-            prismaUser.users.update({
-                where: {
-                    id: Number(data.id)
-                },
-                data
-            }
-            ).then(createdService => response.status(201).json(createdService))
-        } catch (error) {
-
-            response.json(error);
-        }
-        prismaUser.$disconnect()
-    }
+			response.json(error);
+		}
+	}
 }

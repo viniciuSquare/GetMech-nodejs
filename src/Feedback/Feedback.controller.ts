@@ -6,8 +6,8 @@ export class FeedbackController {
 
     get(request: Request, response: Response) {
         try {
-            const prismaClient: PrismaClient = new PrismaClient()
-            prismaClient.feedbacks.findMany().then(feedbacks => {
+            const prismaUser: PrismaClient = new PrismaClient()
+            prismaUser.feedbacks.findMany().then(feedbacks => {
                 response.status(200)
                     .json(feedbacks);
             })
@@ -18,9 +18,9 @@ export class FeedbackController {
     }
 
     create(request: Request, response: Response) {
-        const prismaClient: PrismaClient = new PrismaClient();
+        const prismaUser: PrismaClient = new PrismaClient();
         try {
-            prismaClient.feedbacks.create({
+            prismaUser.feedbacks.create({
                 data: request.body
             }
             ).then(createdService => response.status(201).json(createdService))
@@ -28,11 +28,11 @@ export class FeedbackController {
 
             response.json(error);
         }
-        prismaClient.$disconnect()
+        prismaUser.$disconnect()
     }
 
     update(request: Request, response: Response) {
-        const prismaClient: PrismaClient = new PrismaClient();
+        const prismaUser: PrismaClient = new PrismaClient();
 
         if (!request.query.id) {
             response.status(403).json('Page ID not informed');
@@ -40,7 +40,7 @@ export class FeedbackController {
         }
 
         try {
-            prismaClient.feedbacks.update({
+            prismaUser.feedbacks.update({
                 where: {
                     id: Number(request.query.id)
                 },
@@ -51,6 +51,6 @@ export class FeedbackController {
 
             response.json(error);
         }
-        prismaClient.$disconnect()
+        prismaUser.$disconnect()
     }
 }

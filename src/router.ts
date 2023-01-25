@@ -1,14 +1,14 @@
-import { Request, Response, Router } from 'express'
+import { Router } from 'express'
 
-import { ClientController } from './User/User.controller';
+import { UserController } from './User/User.controller';
 import { FeedbackController } from './Feedback/Feedback.controller';
 import { ServiceOrderController } from './ServiceOrder/ServiceOrder.controller';
 
 export const router: Router = Router();
 
-router.get('/Client', new ClientController().get );
-router.post('/Client', new ClientController().create );
-router.put('/Client', new ClientController().update );
+router.get('/User', new UserController().get );
+router.post('/User', new UserController().create );
+router.put('/User', new UserController().update );
 
 router.get('/ServiceOrder', new ServiceOrderController().get );
 router.post('/ServiceOrder', new ServiceOrderController().create );

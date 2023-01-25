@@ -6,8 +6,8 @@ export class ServiceOrderController {
 
     get(request: Request, response: Response) {
         try {
-            const prismaClient: PrismaClient = new PrismaClient()
-            prismaClient.services.findMany().then(services => {
+            const prismaUser: PrismaClient = new PrismaClient()
+            prismaUser.services.findMany().then(services => {
                 response.status(200)
                     .json(services);
             })
@@ -18,9 +18,9 @@ export class ServiceOrderController {
     }
 
     create(request: Request, response: Response) {
-        const prismaClient: PrismaClient = new PrismaClient();
+        const prismaUser: PrismaClient = new PrismaClient();
         try {
-            prismaClient.services.create({
+            prismaUser.services.create({
                 data: request.body
             }
             ).then(createdService => response.status(201).json(createdService))
@@ -28,11 +28,11 @@ export class ServiceOrderController {
 
             response.json(error);
         }
-        prismaClient.$disconnect()
+        prismaUser.$disconnect()
     }
 
     update(request: Request, response: Response) {
-        const prismaClient: PrismaClient = new PrismaClient();
+        const prismaUser: PrismaClient = new PrismaClient();
 
         if (!request.query.id) {
             response.status(403).json('Page ID not informed');
@@ -40,7 +40,7 @@ export class ServiceOrderController {
         }
 
         try {
-            prismaClient.services.update({
+            prismaUser.services.update({
                 where: {
                     id: Number(request.query.id)
                 },
@@ -51,6 +51,6 @@ export class ServiceOrderController {
 
             response.json(error);
         }
-        prismaClient.$disconnect()
+        prismaUser.$disconnect()
     }
 }
